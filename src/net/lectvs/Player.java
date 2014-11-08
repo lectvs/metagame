@@ -10,19 +10,20 @@ public class Player extends Entity {
     public float ax, ay;
     public boolean onGround;
 
-    public float speed = 3;
+    public float speed = 5;
     public float jumpForce = 14;
 
     public Player(int x, int y) {
         super(x, y);
-        setBounds(-9, -16, 18, 32);
+        setBounds(-9, -16, 18, 47);
 
-        sprite = new Sprite("player.png", 16, 16, 0, 1, 1);
-        sprite.setDimensions(32, 32);
-        sprite.addAnim("idle", new float[]{1, 0.125f, 0, 1, 2, 3});
-        sprite.addAnim("run", new float[]{1, 0.125f, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14});
-        sprite.addAnim("jump", new float[]{1, 1f, 9});
-        sprite.addAnim("fall", new float[]{1, 1f, 11});
+        sprite = new Sprite("player.png", 32, 32, 0, 1, 1);
+        sprite.setDimensions(64, 64);
+        sprite.addAnim("idle", new float[]{1, 0.1f, 0, 1, 2, 3, 4, 5});
+        sprite.addAnim("run", new float[]{1, 0.1f, 6, 7, 8, 9, 10, 11, 12, 13});
+        sprite.addAnim("jump", new float[]{1, 1f, 14});
+        sprite.addAnim("fall", new float[]{1, 1f, 15});
+        sprite.addAnim("attack", new float[]{1, .08f, 17, 18, 19, 20});
     }
 
     public void update() {
@@ -97,7 +98,7 @@ public class Player extends Entity {
 
         y += vy;
         if (onGround)
-            y += 2;     // Moves the player down extra pixels to ensure it "sticks" to slopes when walking down them
+            y += Math.abs(vx);     // Moves the player down extra pixels to ensure it "sticks" to slopes when walking down them
         if (collideWithWalls) {
             collideWithWallsY();
         }
