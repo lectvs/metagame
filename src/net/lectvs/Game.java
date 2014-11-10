@@ -1,5 +1,7 @@
 package net.lectvs;
 
+import net.lectvs.enemies.GroundEnemy;
+
 import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -39,8 +41,8 @@ public class Game extends Screen{
         player.update();
 
         // Set camera to place the player in the center of the screen
-        camx = (int)player.leftBound() + (int)player.w / 2 - 250;
-        camy = (int)player.topBound() + (int)player.h / 2 - 150;
+        camx = (int)player.leftBound() + (int)player.w / 2 - Main.gameWidth / 2;
+        camy = (int)player.topBound() + (int)player.h / 2 - Main.gameHeight / 2;
 
         for (Entity e : gameObjects) {
             e.update();
@@ -128,5 +130,7 @@ public class Game extends Screen{
         walls.add(new Slope(640, 200, 40, 80, 2));
         walls.add(new Slope(640, 280, 40, 40, 3));
         walls.add(new Wall(600, 200, 40, 120));
+
+        addObjects.add(new GroundEnemy(400, 60));
     }
 }

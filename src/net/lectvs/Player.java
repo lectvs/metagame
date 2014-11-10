@@ -85,7 +85,7 @@ public class Player extends Entity {
         super.render();
 
         // Draws collision box over player
-        GL11.glColor4f(1, 0, 0, 1);
+        GL11.glColor4f(0.2f, 1, 0.2f, 1);
         Maths.drawOutlineRect(leftBound() - Game.camx, topBound() - Game.camy, w, h, 1);
     }
 

@@ -19,8 +19,11 @@ import static org.lwjgl.opengl.GL11.*;
 public class Main {
 
     // The size of the game window
-    public static int windowWidth = 1000;
-    public static int windowHeight = 600;
+    public static int gameWidth = 500;
+    public static int gameHeight = 300;
+
+    public static int windowWidth = gameWidth * 2;      // 2x
+    public static int windowHeight = gameHeight * 2;    // scaling
 
     public static FBO gameFBO;
     public static Game game;
@@ -43,7 +46,7 @@ public class Main {
 
         initGL(windowWidth, windowHeight);
 
-        gameFBO = new FBO(windowWidth / 2, windowHeight / 2); // Sets the game to render with 2x scaling
+        gameFBO = new FBO(gameWidth, gameHeight);
         game.init();
         screen = game; // Sets the current screen (game world) to our game class
 

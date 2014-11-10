@@ -26,9 +26,7 @@ public class Maths {
         arc_angle *= Math.PI / 180;
 
         double theta = arc_angle / (double)(num_segments - 1);//theta is now calculated from the arc angle instead, the - 1 bit comes from the fact that the arc is open
-
-        double tangetial_factor = Math.tan(theta);
-
+        double tangential_factor = Math.tan(theta);
         double radial_factor = Math.cos(theta);
 
 
@@ -44,8 +42,8 @@ public class Maths {
             double tx = -y;
             double ty = x;
 
-            x += tx * tangetial_factor;
-            y += ty * tangetial_factor;
+            x += tx * tangential_factor;
+            y += ty * tangential_factor;
 
             x *= radial_factor;
             y *= radial_factor;
@@ -72,18 +70,18 @@ public class Maths {
         GL11.glVertex2d((int) x + borderWidth, (int) y);
         GL11.glVertex2d((int) x + borderWidth, (int) y + (int) h);
         GL11.glVertex2d((int) x, (int) y + (int) h);
-        GL11.glVertex2d((int)x + (int)w - borderWidth, (int)y);
-        GL11.glVertex2d((int)x + (int)w, (int)y);
-        GL11.glVertex2d((int)x + (int)w, (int)y + (int)h);
-        GL11.glVertex2d((int)x + (int)w - borderWidth, (int)y + (int)h);
-        GL11.glVertex2d((int)x, (int)y);
-        GL11.glVertex2d((int)x + (int)w, (int)y);
-        GL11.glVertex2d((int)x + (int)w, (int)y + borderWidth);
-        GL11.glVertex2d((int)x, (int)y + borderWidth);
-        GL11.glVertex2d((int)x, (int)y + (int)h - borderWidth);
-        GL11.glVertex2d((int)x + (int)w, (int)y + (int)h - borderWidth);
-        GL11.glVertex2d((int)x + (int)w, (int)y + (int)h);
-        GL11.glVertex2d((int)x, (int)y + (int)h);
+        GL11.glVertex2d((int) x + (int) w - borderWidth, (int) y);
+        GL11.glVertex2d((int) x + (int) w, (int) y);
+        GL11.glVertex2d((int) x + (int) w, (int) y + (int) h);
+        GL11.glVertex2d((int) x + (int) w - borderWidth, (int) y + (int) h);
+        GL11.glVertex2d((int) x, (int) y);
+        GL11.glVertex2d((int) x + (int) w, (int) y);
+        GL11.glVertex2d((int) x + (int) w, (int) y + borderWidth);
+        GL11.glVertex2d((int) x, (int) y + borderWidth);
+        GL11.glVertex2d((int) x, (int) y + (int) h - borderWidth);
+        GL11.glVertex2d((int) x + (int) w, (int) y + (int) h - borderWidth);
+        GL11.glVertex2d((int) x + (int) w, (int) y + (int) h);
+        GL11.glVertex2d((int) x, (int) y + (int) h);
         GL11.glEnd();
     }
 }
