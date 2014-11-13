@@ -10,8 +10,11 @@ import org.lwjgl.opengl.GL11;
  */
 public class GroundEnemy extends Enemy {
 
-    public GroundEnemy(float x, float y) {
+    public int velocity;
+
+    public GroundEnemy(float x, float y, int velocity) {
         super(x, y);
+        this.velocity = velocity;
         setBounds(0, 0, 32, 32);
 
         maxHealth = 3;
@@ -19,6 +22,15 @@ public class GroundEnemy extends Enemy {
     }
 
     public void update() {
+
+        vx = velocity;
+        vy += 0.3f;
+        move(true);
+
+        if (vx == 0) {
+            velocity = -velocity;
+        }
+
         super.update();
     }
 

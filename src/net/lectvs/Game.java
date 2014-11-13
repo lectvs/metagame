@@ -85,29 +85,13 @@ public class Game extends Screen{
         walls.add(new Wall(960, 40, 40, 680));
         walls.add(new Wall(40, 680, 920, 40));
 
-        walls.add(new Wall(40, 40, 40, 80));
-        walls.add(new Wall(80, 40, 40, 40));
-        walls.add(new Slope(120, 40, 80, 40, 3));
-        walls.add(new Slope(80, 80, 40, 40, 3));
-        walls.add(new Slope(40, 120, 40, 80, 3));
+        walls.add(new Slope(40, 40, 120, 120, 3));
 
-        walls.add(new Wall(920, 40, 40, 80));
-        walls.add(new Wall(880, 40, 40, 40));
-        walls.add(new Slope(800, 40, 80, 40, 4));
-        walls.add(new Slope(880, 80, 40, 40, 4));
-        walls.add(new Slope(920, 120, 40, 80, 4));
+        walls.add(new Slope(840, 40, 120, 120, 4));
 
-        walls.add(new Wall(40, 600, 40, 80));
-        walls.add(new Wall(80, 640, 40, 40));
-        walls.add(new Slope(40, 520, 40, 80, 2));
-        walls.add(new Slope(80, 600, 40, 40, 2));
-        walls.add(new Slope(120, 640, 80, 40, 2));
+        walls.add(new Slope(40, 560, 120, 120, 2));
 
-        walls.add(new Wall(920, 600, 40, 80));
-        walls.add(new Wall(880, 640, 40, 40));
-        walls.add(new Slope(920, 520, 40, 80, 1));
-        walls.add(new Slope(880, 600, 40, 40, 1));
-        walls.add(new Slope(800, 640, 80, 40, 1));
+        walls.add(new Slope(840, 560, 120, 120, 1));
 
         walls.add(new Slope(320, 600, 80, 80, 1));
         walls.add(new Slope(400, 560, 80, 40, 1));
@@ -121,16 +105,10 @@ public class Game extends Screen{
 
         walls.add(new Wall(160, 320, 120, 40));
 
-        walls.add(new Slope(360, 160, 160, 80, 1));
-        walls.add(new Slope(440, 240, 80, 40, 3));
         walls.add(new Wall(360, 240, 80, 40));
         walls.add(new Wall(520, 160, 80, 80));
-        walls.add(new Slope(600, 160, 40, 40, 2));
-        walls.add(new Slope(520, 240, 80, 80, 4));
-        walls.add(new Slope(640, 200, 40, 80, 2));
-        walls.add(new Slope(640, 280, 40, 40, 3));
         walls.add(new Wall(600, 200, 40, 120));
 
-        addObjects.add(new GroundEnemy(400, 60));
+        addObjects.add(new GroundEnemy(400, 60, -2));
     }
 }
