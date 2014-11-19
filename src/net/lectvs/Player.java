@@ -14,7 +14,7 @@ public class Player extends Entity {
         super(x, y);
         setBounds(-9, -16, 18, 47);
 
-        sprite = new Sprite("player.png", 32, 32, 0, 1, 1);
+        sprite = new Sprite("player_white.png", 32, 32, 0, 1, 1);
         sprite.setDimensions(64, 64);
         sprite.addAnim("idle", new float[]{1, 0.1f, 0, 1, 2, 3, 4, 5});
         sprite.addAnim("run", new float[]{1, 0.1f, 6, 7, 8, 9, 10, 11, 12, 13});

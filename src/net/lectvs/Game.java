@@ -2,7 +2,10 @@ package net.lectvs;
 
 import net.lectvs.enemies.GroundEnemy;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -20,6 +23,8 @@ public class Game extends Screen{
     public static ArrayList<Entity> removeObjects = new ArrayList<Entity>();
     public static ArrayList<Entity> addObjects = new ArrayList<Entity>();
 
+    public Tilemap foreground, background;
+
     public static int camx, camy;
 
     public static Player player;
@@ -34,7 +39,7 @@ public class Game extends Screen{
         camx = 0;
         camy = 0;
 
-        loadLevel(0);
+        loadLevel("level1");
     }
 
     public void update() {
@@ -62,7 +67,7 @@ public class Game extends Screen{
     public void render() {
 
         // Clears the background with the color white
-        glClearColor(1, 1, 1, 1);
+        glClearColor(0.14f, 0.14f, 0.08f, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glColor4f(1, 1, 1, 1);
@@ -76,39 +81,51 @@ public class Game extends Screen{
         for (Wall w : walls) {
             w.render();
         }
+
+        glColor4f(1, 1, 1, 1);
+        foreground.render(-camx, -camy);
     }
 
     // Load the level. This will become a file interpreter once we start using a level editor
-    public void loadLevel(int id) {
-        walls.add(new Wall(0, 0, 40, 720));
-        walls.add(new Wall(40, 0, 960, 40));
-        walls.add(new Wall(960, 40, 40, 680));
-        walls.add(new Wall(40, 680, 920, 40));
+    public void loadLevel(String name) {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("net/lectvs/res/" + name + ".oel"));
+            String line;
+            String[] data;
+            int i;
 
-        walls.add(new Slope(40, 40, 120, 120, 3));
+            line = br.readLine(); // Level w/h data
+            data = line.split("\"");
+            foreground = new Tilemap("tiles.png", Integer.parseInt(data[1]), Integer.parseInt(data[3]), 64, 64);
 
-        walls.add(new Slope(840, 40, 120, 120, 4));
+            line = br.readLine(); // BG tileset + First line
+            while (!(line = br.readLine()).startsWith("  <")) { // BG tile data
 
-        walls.add(new Slope(40, 560, 120, 120, 2));
+            }
+            while (!(line = br.readLine()).startsWith("  <")) { // Wall data
+                data = line.split("\"");
+                walls.add(new Wall(Integer.parseInt(data[1]), Integer.parseInt(data[3]), Integer.parseInt(data[5]), Integer.parseInt(data[7])));
+            }
+            line = br.readLine(); // FG tileset + First line
+            data = line.split(">")[1].split(",");
+            for (int j = 0; j < data.length; j++) {
+                foreground.setTile(j, 0, Integer.parseInt(data[j]), 0);
+            }
 
-        walls.add(new Slope(840, 560, 120, 120, 1));
+            i = 1;
+            while (!(line = br.readLine()).startsWith("</level>")) { // FG tile data
+                data = line.split("<")[0].split(",");
+                for (int j = 0; j < data.length; j++) {
+                    foreground.setTile(j, i, Integer.parseInt(data[j]), 0);
+                }
+                i++;
+            }
 
-        walls.add(new Slope(320, 600, 80, 80, 1));
-        walls.add(new Slope(400, 560, 80, 40, 1));
-        walls.add(new Slope(480, 480, 80, 80, 1));
-        walls.add(new Wall(400, 600, 80, 80));
-        walls.add(new Wall(480, 560, 80, 120));
-        walls.add(new Wall(560, 480, 160, 200));
-        walls.add(new Wall(720, 580, 40, 100));
-
-        walls.add(new Wall(320, 440, 120, 40));
-
-        walls.add(new Wall(160, 320, 120, 40));
-
-        walls.add(new Wall(360, 240, 80, 40));
-        walls.add(new Wall(520, 160, 80, 80));
-        walls.add(new Wall(600, 200, 40, 120));
-
-        addObjects.add(new GroundEnemy(400, 60, -2));
+        } catch (Exception e) {
+            // Failed to load level
+            e.printStackTrace();
+        }
+        walls.add(new Slope(256, 448, 128, 64, 1));
+        walls.add(new Slope(576, 384, 128, 64, 1));
     }
 }
