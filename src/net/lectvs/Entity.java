@@ -14,6 +14,8 @@ public class Entity {
     public float ox, oy;
     public float bx, by, w, h;
     public float ax, ay, vx, vy;
+    public float maxSpeed;
+    public float inertia;
     public boolean onGround;
     public boolean collidingHoriz, collidingVert;
     public Sprite sprite;
@@ -32,6 +34,11 @@ public class Entity {
     }
     public void render() {
         sprite.render((int)x - Game.camx, (int)y - Game.camy);
+    }
+
+    public void addForce(float ax, float ay) {
+        this.vx += ax;
+        this.vy += ay;
     }
 
     // Moves the entity
@@ -67,10 +74,18 @@ public class Entity {
                 } else if ((slope.dir == 2 && bottomBound() > slope.bottomBound()) || (slope.dir == 3 && topBound() < slope.topBound())) {
                     x = slope.x + slope.w + ox - bx;
                     vx = 0;
-                } else if (slope.dir == 2 && leftBound() > slope.leftBound()) {
-                    y = (slope.h / slope.w) * (leftBound() - slope.leftBound()) + slope.topBound() - h + oy - by;
-                } else if (slope.dir == 3 && leftBound() > slope.leftBound()) {
-                    y = -(slope.h / slope.w) * (leftBound() - slope.leftBound()) + slope.bottomBound() + oy - by;
+                } else if (slope.dir == 2) {
+                    if (leftBound() > slope.leftBound()) {
+                        y = (slope.h / slope.w) * (leftBound() - slope.leftBound()) + slope.topBound() - h + oy - by;
+                    } else {
+                        y = slope.topBound() - h + oy - by;
+                    }
+                } else if (slope.dir == 3) {
+                    if (leftBound() > slope.leftBound()) {
+                        y = -(slope.h / slope.w) * (leftBound() - slope.leftBound()) + slope.bottomBound() + oy - by;
+                    } else {
+                        y = slope.bottomBound() + oy - by;
+                    }
                 }
             }
             if (slope.dir == 1 || slope.dir == 4) {
@@ -80,10 +95,18 @@ public class Entity {
                 } else if ((slope.dir == 1 && bottomBound() > slope.bottomBound()) || (slope.dir == 4 && topBound() < slope.topBound())) {
                     x = slope.x + ox - w - bx;
                     vx = 0;
-                }  else if (slope.dir == 1 && rightBound() < slope.rightBound()) {
-                    y = -(slope.h / slope.w) * (rightBound() - slope.leftBound()) + slope.bottomBound() - h + oy - by;
-                } else if (slope.dir == 4 && rightBound() < slope.rightBound()) {
-                    y = (slope.h / slope.w) * (rightBound() - slope.leftBound()) + slope.topBound() + oy - by;
+                } else if (slope.dir == 1) {
+                    if (rightBound() < slope.rightBound()) {
+                        y = -(slope.h / slope.w) * (rightBound() - slope.leftBound()) + slope.bottomBound() - h + oy - by;
+                    } else {
+                        y = slope.topBound() - h + oy - by;
+                    }
+                } else if (slope.dir == 4) {
+                    if (rightBound() < slope.rightBound()) {
+                        y = (slope.h / slope.w) * (rightBound() - slope.leftBound()) + slope.topBound() + oy - by;
+                    } else {
+                        y = slope.bottomBound() + oy - by;
+                    }
                 }
             }
         }

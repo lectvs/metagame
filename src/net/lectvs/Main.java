@@ -157,7 +157,7 @@ public class Main {
         keyJumpLast = keyJumpDown;
         keyJumpDown = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_Z) || Keyboard.isKeyDown(Keyboard.KEY_SPACE);
         keySelectLast = keySelectDown;
-        keySelectDown = Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN);
+        keySelectDown = Keyboard.isKeyDown(Keyboard.KEY_Z);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
             System.exit(0);

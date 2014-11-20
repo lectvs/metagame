@@ -19,6 +19,9 @@ public class GroundEnemy extends Enemy {
 
         maxHealth = 3;
         health = maxHealth;
+
+        maxSpeed = Math.abs(velocity);
+        inertia = 1;
     }
 
     public void update() {

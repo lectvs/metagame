@@ -7,8 +7,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class Player extends Entity {
 
-    public float speed = 5;
-    public float jumpForce = 14;
+    public float jumpForce;
 
     public Player(int x, int y) {
         super(x, y);
@@ -21,22 +20,24 @@ public class Player extends Entity {
         sprite.addAnim("jump", new float[]{1, 1f, 14});
         sprite.addAnim("fall", new float[]{1, 1f, 15});
         sprite.addAnim("attack", new float[]{1, .08f, 17, 18, 19, 20});
+
+        maxSpeed = 5;
+        inertia = 3;
+        jumpForce = 14;
     }
 
     public void update() {
 
         // Handle input and translate it into velocity, animations, etc
-        vx = 0;
+        // vx = 0;
         if (Main.keyLeftDown) {
-            ax = -(4 + vx) / 3;
-            vx = -speed;
+            ax = Math.min(-(maxSpeed + vx) / inertia, 0);
 
             sprite.play("run");
             sprite.sx = -1;
         }
         else if (Main.keyRightDown) {
-            ax = (4 - vx) / 3;
-            vx = speed;
+            ax = Math.max((maxSpeed - vx) / inertia, 0);
 
             sprite.play("run");
             sprite.sx = 1;
@@ -44,15 +45,18 @@ public class Player extends Entity {
         else {
             if (onGround)
             {
-                ax = -vx / 2;
+                ax = -vx / inertia * 2f;
             } else {
-                ax = -vx / 8;
+                ax = -vx / inertia / 3f;
             }
             sprite.play("idle");
         }
 
         // Vertical movement
         ay = 0.4f;
+        if (Main.keySelectDown && !Main.keySelectLast) {
+            addForce(50, -10);
+        }
         if (Main.keyJumpDown) {
             if (onGround)
             {
@@ -70,7 +74,7 @@ public class Player extends Entity {
             sprite.play("fall");
         }
 
-        //vx += ax;
+        vx += ax;
         vy += ay;
         vy *= 0.95;
 

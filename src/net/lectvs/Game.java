@@ -24,6 +24,7 @@ public class Game extends Screen{
     public static ArrayList<Entity> addObjects = new ArrayList<Entity>();
 
     public Tilemap foreground, background;
+    public int levelw, levelh;
 
     public static int camx, camy;
 
@@ -96,7 +97,9 @@ public class Game extends Screen{
 
             line = br.readLine(); // Level w/h data
             data = line.split("\"");
-            foreground = new Tilemap("tiles.png", Integer.parseInt(data[1]), Integer.parseInt(data[3]), 64, 64);
+            levelw = Integer.parseInt(data[1]);
+            levelh = Integer.parseInt(data[3]);
+            foreground = new Tilemap("tiles.png", levelw, levelh, 64, 64);
 
             line = br.readLine(); // BG tileset + First line
             while (!(line = br.readLine()).startsWith("  <")) { // BG tile data
@@ -127,5 +130,12 @@ public class Game extends Screen{
         }
         walls.add(new Slope(256, 448, 128, 64, 1));
         walls.add(new Slope(576, 384, 128, 64, 1));
+
+        walls.add(new Wall(0, 0, 0, levelh));
+        walls.add(new Wall(0, 0, levelw, 0));
+        walls.add(new Wall(levelw, 0, 0, levelh));
+        walls.add(new Wall(0, levelh, levelw, 0));
+
+        gameObjects.add(new GroundEnemy(200, 200, -1));
     }
 }
