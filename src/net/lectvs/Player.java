@@ -7,7 +7,8 @@ import org.lwjgl.opengl.GL11;
  */
 public class Player extends Entity {
 
-    public float jumpForce;
+    public float dashForce, jumpForce;
+    public boolean hasDoubleJumped;
 
     public Player(int x, int y) {
         super(x, y);
@@ -22,52 +23,77 @@ public class Player extends Entity {
         sprite.addAnim("attack", new float[]{1, .08f, 17, 18, 19, 20});
 
         maxSpeed = 5;
-        inertia = 3;
-        jumpForce = 14;
+        friction = 0.8f;
+        acceleration = 0.8f;
+        deceleration = 1.6f;
+
+        dashForce = 20;
+        jumpForce = 10;
+
+        hasDoubleJumped = false;
     }
 
     public void update() {
 
         // Handle input and translate it into velocity, animations, etc
-        // vx = 0;
         if (Main.keyLeftDown) {
-            ax = Math.min(-(maxSpeed + vx) / inertia, 0);
+            if (vx > 0) {
+                vx -= deceleration;
+            }
+            else if (vx > -maxSpeed) {
+                vx -= acceleration;
+            }
+            else {
+                vx += friction;
+            }
+
+            if (Stats.canDash && Main.keySelectDown && !Main.keySelectLast) {
+                addForce(-dashForce, 0);
+            }
 
             sprite.play("run");
             sprite.sx = -1;
-        }
-        else if (Main.keyRightDown) {
-            ax = Math.max((maxSpeed - vx) / inertia, 0);
+        } else if (Main.keyRightDown) {
+            if (vx < 0) {
+                vx += deceleration;
+            }
+            else if (vx < maxSpeed) {
+                vx += acceleration;
+            }
+            else {
+                vx -= friction;
+            }
+
+            if (Stats.canDash && Main.keySelectDown && !Main.keySelectLast) {
+                addForce(dashForce, 0);
+            }
 
             sprite.play("run");
             sprite.sx = 1;
-        }
-        else {
-            if (onGround)
-            {
-                ax = -vx / inertia * 2f;
-            } else {
-                ax = -vx / inertia / 3f;
-            }
+        } else {
+            vx -= Math.min(Math.abs(vx), friction) * Math.signum(vx);
             sprite.play("idle");
         }
 
         // Vertical movement
         ay = 0.4f;
-        if (Main.keySelectDown && !Main.keySelectLast) {
-            addForce(50, -10);
-        }
-        if (Main.keyJumpDown) {
-            if (onGround)
-            {
+        if (Main.keyJumpDown && !Main.keyJumpLast) {
+            if (onGround) {
                 vy = -jumpForce;
                 onGround = false;
+            } else if (Stats.canDoubleJump && !hasDoubleJumped) {
+                vy = -jumpForce;
+                hasDoubleJumped = true;
             }
-            if (vy < 0)
-            {
+            if (vy < 0) {
                 ay = 0.2f;
             }
         }
+
+        if (onGround) {
+            hasDoubleJumped = false;
+        }
+
         if (vy < 0) {
             sprite.play("jump");
         } else if (!onGround) {
@@ -76,7 +102,6 @@ public class Player extends Entity {
 
         vx += ax;
         vy += ay;
-        vy *= 0.95;
 
         // Move the character
         move(true);

@@ -14,8 +14,7 @@ public class Entity {
     public float ox, oy;
     public float bx, by, w, h;
     public float ax, ay, vx, vy;
-    public float maxSpeed;
-    public float inertia;
+    public float maxSpeed, acceleration, deceleration, friction;
     public boolean onGround;
     public boolean collidingHoriz, collidingVert;
     public Sprite sprite;

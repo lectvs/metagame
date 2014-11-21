@@ -46,6 +46,8 @@ public class Main {
 
         initGL(windowWidth, windowHeight);
 
+        Stats.loadStats();
+
         gameFBO = new FBO(gameWidth, gameHeight);
         game.init();
         screen = game; // Sets the current screen (game world) to our game class
@@ -155,7 +157,7 @@ public class Main {
         keyEnterDown = Keyboard.isKeyDown(Keyboard.KEY_RETURN);
 
         keyJumpLast = keyJumpDown;
-        keyJumpDown = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_Z) || Keyboard.isKeyDown(Keyboard.KEY_SPACE);
+        keyJumpDown = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_SPACE);
         keySelectLast = keySelectDown;
         keySelectDown = Keyboard.isKeyDown(Keyboard.KEY_Z);
 
