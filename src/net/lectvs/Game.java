@@ -5,7 +5,6 @@ import net.lectvs.enemies.GroundEnemy;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Date;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -23,8 +22,9 @@ public class Game extends Screen{
     public static ArrayList<Entity> removeObjects = new ArrayList<Entity>();
     public static ArrayList<Entity> addObjects = new ArrayList<Entity>();
 
+    public Sprite foregroundPanel, backgroundPanel;
     public Tilemap foreground, background;
-    public int levelw, levelh;
+    public int levelWidth, levelHeight;
 
     public static int camx, camy;
 
@@ -47,8 +47,9 @@ public class Game extends Screen{
         player.update();
 
         // Set camera to place the player in the center of the screen
-        camx = (int)player.leftBound() + (int)player.w / 2 - Main.gameWidth / 2;
-        camy = (int)player.topBound() + (int)player.h / 2 - Main.gameHeight / 2;
+        camx = Math.max(0, Math.min(levelWidth - Main.gameWidth, (int)player.leftBound() + (int)player.w / 2 - Main.gameWidth / 2));
+        camy = Math.max(0, Math.min(levelHeight - Main.gameHeight, (int)player.topBound() + (int)player.h / 2 - Main.gameHeight / 2));
+
 
         for (Entity e : gameObjects) {
             e.update();
@@ -68,10 +69,15 @@ public class Game extends Screen{
     public void render() {
 
         // Clears the background with the color white
-        glClearColor(0.14f, 0.14f, 0.08f, 1);
+        glClearColor(0f, 0.13f, 0.29f, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glColor4f(1, 1, 1, 1);
+        if (backgroundPanel != null)
+            backgroundPanel.render(-camx, -camy);
+        if (background != null)
+            background.render(-camx, -camy);
+
         for (Entity e : gameObjects) {
             e.render();
         }
@@ -84,7 +90,10 @@ public class Game extends Screen{
         }
 
         glColor4f(1, 1, 1, 1);
-        foreground.render(-camx, -camy);
+        if (foreground != null)
+            foreground.render(-camx, -camy);
+        if (foregroundPanel != null)
+            foregroundPanel.render(-camx, -camy);
     }
 
     // Load the level. This will become a file interpreter once we start using a level editor
@@ -97,44 +106,60 @@ public class Game extends Screen{
 
             line = br.readLine(); // Level w/h data
             data = line.split("\"");
-            levelw = Integer.parseInt(data[1]);
-            levelh = Integer.parseInt(data[3]);
-            foreground = new Tilemap("tiles.png", levelw, levelh, 64, 64);
+            levelWidth = Integer.parseInt(data[1]);
+            levelHeight = Integer.parseInt(data[3]);
 
             line = br.readLine(); // BG tileset + First line
-            while (!(line = br.readLine()).startsWith("  <")) { // BG tile data
+            data = line.split(">");
+            background = new Tilemap(data[0].split("\"")[1] + ".png", levelWidth, levelHeight, 32, 32);
+            backgroundPanel = new Sprite("forest_backgroundpanel.png");
+            data = line.split(">")[1].split(",");
+            i = 0;
+            do { // BG tile data
+                for (int j = 0; j < data.length; j++) {
+                    background.setTile(j, i, Integer.parseInt(data[j]) % (background.textureWidth / background.tileWidth), (int)Math.floor(Integer.parseInt(data[j]) / (double)(background.textureWidth / background.tileWidth)));
+                }
+                i++;
+                line = br.readLine();
+                data = line.split("<")[0].split(",");
+            } while (!line.startsWith("  <"));
 
-            }
             while (!(line = br.readLine()).startsWith("  <")) { // Wall data
                 data = line.split("\"");
                 walls.add(new Wall(Integer.parseInt(data[1]), Integer.parseInt(data[3]), Integer.parseInt(data[5]), Integer.parseInt(data[7])));
             }
-            line = br.readLine(); // FG tileset + First line
-            data = line.split(">")[1].split(",");
-            for (int j = 0; j < data.length; j++) {
-                foreground.setTile(j, 0, Integer.parseInt(data[j]), 0);
-            }
 
-            i = 1;
-            while (!(line = br.readLine()).startsWith("</level>")) { // FG tile data
-                data = line.split("<")[0].split(",");
+            line = br.readLine(); // FG tileset + First line
+            data = line.split(">");
+            foreground = new Tilemap(data[0].split("\"")[1] + ".png", levelWidth, levelHeight, 32, 32);
+            foregroundPanel = new Sprite("forest_foregroundpanel.png");
+            data = data[1].split(",");
+            i = 0;
+            do { // FG tile data
                 for (int j = 0; j < data.length; j++) {
-                    foreground.setTile(j, i, Integer.parseInt(data[j]), 0);
+                    foreground.setTile(j, i, Integer.parseInt(data[j]) % (foreground.textureWidth / foreground.tileWidth), (int)Math.floor(Integer.parseInt(data[j]) / (double)(foreground.textureWidth / foreground.tileWidth)));
+                    if (j < data.length - 1) {
+                        if (data[j].equals("4") && data[j + 1].equals("5")) {
+                            walls.add(new Slope(32 * j, 32 * i, 64, 32, 1));
+                        } else if (data[j].equals("6") && data[j + 1].equals("7")) {
+                            walls.add(new Slope(32 * j, 32 * i, 64, 32, 2));
+                        }
+                    }
                 }
                 i++;
-            }
+                line = br.readLine();
+                data = line.split("<")[0].split(",");
+            } while (!line.startsWith("</level>"));
 
         } catch (Exception e) {
             // Failed to load level
             e.printStackTrace();
         }
-        walls.add(new Slope(256, 448, 128, 64, 1));
-        walls.add(new Slope(576, 384, 128, 64, 1));
 
-        walls.add(new Wall(0, 0, 0, levelh));
-        walls.add(new Wall(0, 0, levelw, 0));
-        walls.add(new Wall(levelw, 0, 0, levelh));
-        walls.add(new Wall(0, levelh, levelw, 0));
+        walls.add(new Wall(-100, 0, 100, levelHeight));
+        walls.add(new Wall(0, -100, levelWidth, 100));
+        walls.add(new Wall(levelWidth, 0, 100, levelHeight));
+        walls.add(new Wall(0, levelHeight, levelWidth, 100));
 
         gameObjects.add(new GroundEnemy(200, 200, -1));
     }

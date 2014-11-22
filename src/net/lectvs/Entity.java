@@ -70,9 +70,9 @@ public class Entity {
                 if (vx > 0 && leftBound() < slope.leftBound()) {
                     x = slope.x + ox - w - bx;
                     vx = 0;
-                } else if ((slope.dir == 2 && bottomBound() > slope.bottomBound()) || (slope.dir == 3 && topBound() < slope.topBound())) {
-                    x = slope.x + slope.w + ox - bx;
-                    vx = 0;
+                //} else if (!onGround && ((slope.dir == 2 && bottomBound() > slope.bottomBound()) || (slope.dir == 3 && topBound() < slope.topBound()))) {
+                //    x = slope.x + slope.w + ox - bx;
+                //    vx = 0;
                 } else if (slope.dir == 2) {
                     if (leftBound() > slope.leftBound()) {
                         y = (slope.h / slope.w) * (leftBound() - slope.leftBound()) + slope.topBound() - h + oy - by;
@@ -91,9 +91,9 @@ public class Entity {
                 if (vx < 0 && rightBound() > slope.rightBound()){
                     x = slope.x + slope.w + ox - bx;
                     vx = 0;
-                } else if ((slope.dir == 1 && bottomBound() > slope.bottomBound()) || (slope.dir == 4 && topBound() < slope.topBound())) {
-                    x = slope.x + ox - w - bx;
-                    vx = 0;
+                //} else if (!onGround && ((slope.dir == 1 && bottomBound() > slope.bottomBound()) || (slope.dir == 4 && topBound() < slope.topBound()))) {
+                //    x = slope.x + ox - w - bx;
+                //    vx = 0;
                 } else if (slope.dir == 1) {
                     if (rightBound() < slope.rightBound()) {
                         y = -(slope.h / slope.w) * (rightBound() - slope.leftBound()) + slope.bottomBound() - h + oy - by;

@@ -19,6 +19,7 @@ import java.io.IOException;
 public class Tilemap {
     public Texture texture;
     public int width, height, tileWidth, tileHeight;
+    public int textureWidth, textureHeight;
     public int[][][] tiles;
 
     // dir: directory of tilemap sprite sheet, width/height = width and height of the tilemap, tileWidth/tileHeight = pixel width and height of the tiles
@@ -34,6 +35,9 @@ public class Tilemap {
         this.height = height;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
+
+        textureWidth = texture.getTextureWidth();
+        textureHeight = texture.getTextureHeight();
 
         tiles = new int[(int)(width / tileWidth)][(int)(height / tileHeight)][2];
         for (int i = 0; i < tiles.length; i++) {
@@ -58,13 +62,13 @@ public class Tilemap {
             for (int j = 0; j < tiles[0].length; j++) {
                 if (tiles[i][j][0] > -1) {
                     glBegin(GL_QUADS);
-                    glTexCoord2d(tiles[i][j][0] * tileWidth / (float)texture.getTextureWidth(), tiles[i][j][1] * tileHeight / (float)texture.getTextureHeight());
+                    glTexCoord2d(tiles[i][j][0] * tileWidth / (float)textureWidth, tiles[i][j][1] * tileHeight / (float)textureHeight);
                     glVertex2d(x + i * tileWidth, y + j * tileHeight);
-                    glTexCoord2d((tiles[i][j][0] * tileWidth + tileWidth) / (float)texture.getTextureWidth(), tiles[i][j][1] * tileHeight / (float)texture.getTextureHeight());
+                    glTexCoord2d((tiles[i][j][0] * tileWidth + tileWidth) / (float)textureWidth, tiles[i][j][1] * tileHeight / (float)textureHeight);
                     glVertex2d(x + i * tileWidth + tileWidth, y + j * tileHeight);
-                    glTexCoord2d((tiles[i][j][0] * tileWidth + tileWidth) / (float)texture.getTextureWidth(), (tiles[i][j][1] * tileHeight + tileHeight) / (float)texture.getTextureHeight());
+                    glTexCoord2d((tiles[i][j][0] * tileWidth + tileWidth) / (float)textureWidth, (tiles[i][j][1] * tileHeight + tileHeight) / (float)textureHeight);
                     glVertex2d(x + i * tileWidth + tileWidth, y + j * tileHeight + tileHeight);
-                    glTexCoord2d(tiles[i][j][0] * tileWidth / (float)texture.getTextureWidth(), (tiles[i][j][1] * tileHeight + tileHeight) / (float)texture.getTextureHeight());
+                    glTexCoord2d(tiles[i][j][0] * tileWidth / (float)textureWidth, (tiles[i][j][1] * tileHeight + tileHeight) / (float)textureHeight);
                     glVertex2d(x + i * tileWidth, y + j * tileHeight + tileHeight);
                     glEnd();
                 }

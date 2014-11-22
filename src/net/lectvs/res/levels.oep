@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <OgmoVersion>2.1.0.6</OgmoVersion>
-  <Name>New Project</Name>
+  <Name>Metagame</Name>
   <BackgroundColor A="255" R="125" G="160" B="255" />
   <GridColor A="255" R="255" G="240" B="90" />
   <LevelDefaultSize>
@@ -9,12 +9,12 @@
     <Height>768</Height>
   </LevelDefaultSize>
   <LevelMinimumSize>
-    <Width>64</Width>
-    <Height>64</Height>
+    <Width>32</Width>
+    <Height>32</Height>
   </LevelMinimumSize>
   <LevelMaximumSize>
-    <Width>64000</Width>
-    <Height>48000</Height>
+    <Width>32000</Width>
+    <Height>24000</Height>
   </LevelMaximumSize>
   <Filename>C:\Users\Hayden\Documents\GitHub\metagame\src\net\lectvs\res\levels.oep</Filename>
   <AngleMode>Radians</AngleMode>
@@ -29,8 +29,8 @@
     <LayerDefinition xsi:type="TileLayerDefinition">
       <Name>Background</Name>
       <Grid>
-        <Width>64</Width>
-        <Height>64</Height>
+        <Width>32</Width>
+        <Height>32</Height>
       </Grid>
       <ScrollFactor>
         <X>1</X>
@@ -41,8 +41,8 @@
     <LayerDefinition xsi:type="GridLayerDefinition">
       <Name>Walls</Name>
       <Grid>
-        <Width>64</Width>
-        <Height>64</Height>
+        <Width>32</Width>
+        <Height>32</Height>
       </Grid>
       <ScrollFactor>
         <X>1</X>
@@ -54,8 +54,8 @@
     <LayerDefinition xsi:type="TileLayerDefinition">
       <Name>Foreground</Name>
       <Grid>
-        <Width>64</Width>
-        <Height>64</Height>
+        <Width>32</Width>
+        <Height>32</Height>
       </Grid>
       <ScrollFactor>
         <X>1</X>
@@ -66,11 +66,20 @@
   </LayerDefinitions>
   <Tilesets>
     <Tileset>
-      <Name>Forest</Name>
-      <FilePath>tiles.png</FilePath>
+      <Name>forest</Name>
+      <FilePath>forest.png</FilePath>
       <TileSize>
-        <Width>64</Width>
-        <Height>64</Height>
+        <Width>32</Width>
+        <Height>32</Height>
+      </TileSize>
+      <TileSep>0</TileSep>
+    </Tileset>
+    <Tileset>
+      <Name>forest_background</Name>
+      <FilePath>forest_background.png</FilePath>
+      <TileSize>
+        <Width>32</Width>
+        <Height>32</Height>
       </TileSize>
       <TileSep>0</TileSep>
     </Tileset>

@@ -39,6 +39,8 @@ public class Player extends Entity {
     public void update() {
 
         // Handle input and translate it into velocity, animations, etc
+
+        // Horizontal Movement
         if (Main.keyLeftDown) {
             if (vx > 0) {
                 vx -= deceleration;
