@@ -55,6 +55,7 @@ public class Player extends Entity {
             if (Stats.canDash && Main.keyDashDown && !Main.keyDashLast) {
                 addForce(-dashForce, 0);
                 isDashing = true;
+                isAttacking = false;
                 sprite.play("dash");
             }
 
@@ -76,6 +77,7 @@ public class Player extends Entity {
             if (Stats.canDash && Main.keyDashDown && !Main.keyDashLast) {
                 addForce(dashForce, 0);
                 isDashing = true;
+                isAttacking = false;
                 sprite.play("dash");
             }
 
