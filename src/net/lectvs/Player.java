@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 public class Player extends Entity {
 
     public float dashForce, jumpForce;
-    public boolean hasDoubleJumped;
+    public boolean hasDoubleJumped, isDashing, isAttacking;
 
     public Player(int x, int y) {
         super(x, y);
@@ -16,11 +16,12 @@ public class Player extends Entity {
 
         sprite = new Sprite("player_white.png", 32, 32, 0, 1, 1);
         sprite.setDimensions(64, 64);
-        sprite.addAnim("idle", new float[]{1, 0.1f, 0, 1, 2, 3, 4, 5});
-        sprite.addAnim("run", new float[]{1, 0.1f, 6, 7, 8, 9, 10, 11, 12, 13});
-        sprite.addAnim("jump", new float[]{1, 1f, 14});
-        sprite.addAnim("fall", new float[]{1, 1f, 15});
-        sprite.addAnim("attack", new float[]{1, .08f, 17, 18, 19, 20});
+        sprite.addAnim("idle", true, 0.1f, new int[]{0, 1, 2, 3, 4, 5});
+        sprite.addAnim("run", true, 0.1f, new int[]{6, 7, 8, 9, 10, 11, 12, 13});
+        sprite.addAnim("jump",true, 1f, new int[]{14});
+        sprite.addAnim("fall", true, 1f, new int[]{15});
+        sprite.addAnim("attack", false, 0.08f, new int[]{17, 18, 19, 20}, new Runnable() { public void run() { isAttacking = false; } });
+        sprite.addAnim("dash", true, 1f, new int[]{9});
 
         maxSpeed = 5;
         friction = 0.8f;
@@ -31,6 +32,8 @@ public class Player extends Entity {
         jumpForce = 10;
 
         hasDoubleJumped = false;
+        isDashing = false;
+        isAttacking = false;
     }
 
     public void update() {
@@ -47,11 +50,15 @@ public class Player extends Entity {
                 vx += friction;
             }
 
-            if (Stats.canDash && Main.keySelectDown && !Main.keySelectLast) {
+            if (Stats.canDash && Main.keyDashDown && !Main.keyDashLast) {
                 addForce(-dashForce, 0);
+                isDashing = true;
+                sprite.play("dash");
             }
 
-            sprite.play("run");
+            if (!isDashing && !isAttacking)
+                sprite.play("run");
+
             sprite.sx = -1;
         } else if (Main.keyRightDown) {
             if (vx < 0) {
@@ -64,15 +71,21 @@ public class Player extends Entity {
                 vx -= friction;
             }
 
-            if (Stats.canDash && Main.keySelectDown && !Main.keySelectLast) {
+            if (Stats.canDash && Main.keyDashDown && !Main.keyDashLast) {
                 addForce(dashForce, 0);
+                isDashing = true;
+                sprite.play("dash");
             }
 
-            sprite.play("run");
+            if (!isDashing && !isAttacking)
+                sprite.play("run");
+
             sprite.sx = 1;
         } else {
             vx -= Math.min(Math.abs(vx), friction) * Math.signum(vx);
-            sprite.play("idle");
+
+            if (!isDashing && !isAttacking)
+                sprite.play("idle");
         }
 
         // Vertical movement
@@ -90,14 +103,30 @@ public class Player extends Entity {
             }
         }
 
+        if (isDashing) {
+            if (Math.abs(vx) < 1.5f * maxSpeed) {
+                isDashing = false;
+            }
+            onGround = false;
+            vy = 0;
+            ay = 0;
+        }
+
         if (onGround) {
             hasDoubleJumped = false;
         }
 
-        if (vy < 0) {
-            sprite.play("jump");
-        } else if (!onGround) {
-            sprite.play("fall");
+        if (!isDashing && !isAttacking) {
+            if (vy < 0) {
+                sprite.play("jump");
+            } else if (!onGround) {
+                sprite.play("fall");
+            }
+        }
+
+        if (Main.keyAttackDown && !Main.keyAttackLast) {
+            isAttacking = true;
+            sprite.playOverride("attack");
         }
 
         vx += ax;

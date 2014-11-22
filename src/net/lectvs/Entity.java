@@ -60,7 +60,7 @@ public class Entity {
         // If running up/down a slope, reduce movement speed accordingly
         Slope slope = collideSlopes(x, y);
         if (slope != null && onGround) {
-            x = x - vx + slope.w / (float)Maths.distance(0, 0, slope.w, slope.h) * vx;
+            x = x - vx + slope.w / (float) Lectvs.distance(0, 0, slope.w, slope.h) * vx;
         }
 
         // Collide with slopes

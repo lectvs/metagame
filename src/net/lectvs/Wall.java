@@ -15,6 +15,6 @@ public class Wall extends Entity {
     }
 
     public void render() {
-        Maths.drawRect(x - Game.camx, y - Game.camy, w, h);
+        Lectvs.drawRect(x - Game.camx, y - Game.camy, w, h);
     }
 }

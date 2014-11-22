@@ -2,7 +2,7 @@ package net.lectvs.enemies;
 
 import net.lectvs.Enemy;
 import net.lectvs.Game;
-import net.lectvs.Maths;
+import net.lectvs.Lectvs;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -39,7 +39,7 @@ public class GroundEnemy extends Enemy {
 
     public void render() {
         GL11.glColor4f(1, 0, 0, 1);
-        Maths.drawRect(leftBound() - Game.camx, topBound() - Game.camy, w, h);
+        Lectvs.drawRect(leftBound() - Game.camx, topBound() - Game.camy, w, h);
         super.render();
     }
 }

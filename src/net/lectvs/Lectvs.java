@@ -2,6 +2,9 @@ package net.lectvs;
 
 import org.lwjgl.opengl.GL11;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 
@@ -12,7 +15,7 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
  * Time: 8:16 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Maths {
+public class Lectvs {
 
     // The distance formula
     public static double distance(double x1, double y1, double x2, double y2) {
@@ -83,6 +86,33 @@ public class Maths {
         GL11.glVertex2d((int) x + (int) w, (int) y + (int) h);
         GL11.glVertex2d((int) x, (int) y + (int) h);
         GL11.glEnd();
+    }
+
+    public static Object cloneObject(Object obj){
+        try{
+            Object clone = obj.getClass().newInstance();
+            for (Field field : obj.getClass().getDeclaredFields()) {
+                field.setAccessible(true);
+                if(field.get(obj) == null || Modifier.isFinal(field.getModifiers())){
+                    continue;
+                }
+                if(field.getType().isPrimitive() || field.getType().equals(String.class)
+                        || field.getType().getSuperclass().equals(Number.class)
+                        || field.getType().equals(Boolean.class)){
+                    field.set(clone, field.get(obj));
+                }else{
+                    Object childObj = field.get(obj);
+                    if(childObj == obj){
+                        field.set(clone, clone);
+                    }else{
+                        field.set(clone, cloneObject(field.get(obj)));
+                    }
+                }
+            }
+            return clone;
+        }catch(Exception e){
+            return null;
+        }
     }
 }
 

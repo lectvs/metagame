@@ -8,12 +8,6 @@ import org.lwjgl.opengl.DisplayMode;
 //import org.newdawn.slick.font.effects.ColorEffect;
 //import org.newdawn.slick.util.ResourceLoader;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
 import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
@@ -37,7 +31,8 @@ public class Main {
     public static boolean keyLeftDown;
     public static boolean keyRightDown, keyRightLast;
     public static boolean keyJumpDown, keyJumpLast;
-    public static boolean keySelectDown, keySelectLast;
+    public static boolean keyDashDown, keyDashLast;
+    public static boolean keyAttackDown, keyAttackLast;
     public static boolean keyEnterDown;
 
     public void start() {
@@ -158,8 +153,10 @@ public class Main {
 
         keyJumpLast = keyJumpDown;
         keyJumpDown = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_SPACE);
-        keySelectLast = keySelectDown;
-        keySelectDown = Keyboard.isKeyDown(Keyboard.KEY_Z);
+        keyDashLast = keyDashDown;
+        keyDashDown = Keyboard.isKeyDown(Keyboard.KEY_Z);
+        keyAttackLast = keyAttackDown;
+        keyAttackDown = Keyboard.isKeyDown(Keyboard.KEY_X);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
             System.exit(0);
