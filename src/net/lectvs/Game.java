@@ -26,7 +26,8 @@ public class Game extends Screen{
     public Tilemap foreground, background;
     public int levelWidth, levelHeight;
 
-    public static int camx, camy;
+    public static float camx, camy;
+    public static float truecamx, truecamy;
 
     public static Player player;
 
@@ -37,8 +38,8 @@ public class Game extends Screen{
         addObjects.clear();
 
         player = new Player(100, 200);
-        camx = 0;
-        camy = 0;
+        camx = camy = 0;
+        truecamx = truecamy = 0;
 
         loadLevel("level1");
     }
@@ -47,9 +48,21 @@ public class Game extends Screen{
         player.update();
 
         // Set camera to place the player in the center of the screen
-        camx = Math.max(0, Math.min(levelWidth - Main.gameWidth, (int)player.leftBound() + (int)player.w / 2 - Main.gameWidth / 2));
-        camy = Math.max(0, Math.min(levelHeight - Main.gameHeight, (int)player.topBound() + (int)player.h / 2 - Main.gameHeight / 2));
+        truecamx += (camFocusX() - truecamx) / 4f;
+        truecamy += (camFocusY() - truecamy) / 4f;
 
+        if (Math.abs(camFocusX() - truecamx) < 5) {
+            truecamx = camFocusX();
+        }
+        if (Math.abs(camFocusY() - truecamy) < 5) {
+            truecamy = camFocusY();
+        }
+
+        truecamx = Math.max(Main.gameWidth / 2, Math.min(levelWidth - Main.gameWidth / 2, truecamx));
+        truecamy = Math.max(Main.gameHeight / 2, Math.min(levelHeight - Main.gameHeight / 2, truecamy));
+
+        camx = truecamx - Main.gameWidth / 2;
+        camy = truecamy - Main.gameHeight / 2;
 
         for (Entity e : gameObjects) {
             e.update();
@@ -162,5 +175,15 @@ public class Game extends Screen{
         walls.add(new Wall(0, levelHeight, levelWidth, 100));
 
         gameObjects.add(new GroundEnemy(200, 200, -1));
+    }
+
+    public float camFocusX() {
+        float camfocusx = player.leftBound() + player.w / 2 + player.vx + 0.2f * Math.signum(player.vx);
+        //if (player.isDashing)
+        //    camfocusx += 100 * Math.signum(player.vx);
+        return camfocusx;
+    }
+    public float camFocusY() {
+        return player.topBound() + player.h / 2;
     }
 }
