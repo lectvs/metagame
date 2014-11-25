@@ -1,6 +1,6 @@
-package net.lectvs;
+package platform;
 
-import net.lectvs.enemies.GroundEnemy;
+import platform.enemies.GroundEnemy;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -99,7 +99,7 @@ public class Game extends Screen{
     // Load the level. This will become a file interpreter once we start using a level editor
     public void loadLevel(String name) {
         try {
-            BufferedReader br = new BufferedReader(new FileReader("net/lectvs/res/" + name + ".oel"));
+            BufferedReader br = new BufferedReader(new FileReader("src/platform/res/" + name + ".oel"));
             String line;
             String[] data;
             int i;
@@ -139,9 +139,10 @@ public class Game extends Screen{
                 for (int j = 0; j < data.length; j++) {
                     foreground.setTile(j, i, Integer.parseInt(data[j]) % (foreground.textureWidth / foreground.tileWidth), (int)Math.floor(Integer.parseInt(data[j]) / (double)(foreground.textureWidth / foreground.tileWidth)));
                     if (j < data.length - 1) {
-                        if (data[j].equals("4") && data[j + 1].equals("5")) {
+                        //add slope data to slope tiles
+                        if ((data[j].equals("24") && data[j + 1].equals("25")) || (data[j].equals("28") && data[j + 1].equals("29"))) {
                             walls.add(new Slope(32 * j, 32 * i, 64, 32, 1));
-                        } else if (data[j].equals("6") && data[j + 1].equals("7")) {
+                        } else if ((data[j].equals("26") && data[j + 1].equals("27")) || (data[j].equals("30") && data[j + 1].equals("31"))) {
                             walls.add(new Slope(32 * j, 32 * i, 64, 32, 2));
                         }
                     }

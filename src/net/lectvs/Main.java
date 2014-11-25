@@ -1,4 +1,4 @@
-package net.lectvs;
+package platform;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -13,11 +13,12 @@ import static org.lwjgl.opengl.GL11.*;
 public class Main {
 
     // The size of the game window
-    public static int gameWidth = 500;
-    public static int gameHeight = 300;
+    public static int gameWidth = 720;
+    public static int gameHeight = 405;
+    public static final int GAME_SCALE = 1; //scaling
 
-    public static int windowWidth = gameWidth * 2;      // 2x
-    public static int windowHeight = gameHeight * 2;    // scaling
+    public static int windowWidth = gameWidth * GAME_SCALE;      
+    public static int windowHeight = gameHeight * GAME_SCALE; 
 
     public static FBO gameFBO;
     public static Game game;
@@ -110,7 +111,7 @@ public class Main {
 
 //    public void loadFont() {
 //        try {
-//            InputStream inputStream	= ResourceLoader.getResourceAsStream("net/lectvs/res/visitor1.ttf");
+//            InputStream inputStream	= ResourceLoader.getResourceAsStream("platform/res/visitor1.ttf");
 //
 //            Font awtFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
 //            font30 = new UnicodeFont(awtFont.deriveFont(0, 30f));
