@@ -179,7 +179,7 @@ public class Game extends Screen{
     }
 
     public float camFocusX() {
-        float camfocusx = player.leftBound() + player.w / 2 + player.vx + 0.2f * Math.signum(player.vx);
+        float camfocusx = player.leftBound() + player.w / 2 + player.vx * 2;
         //if (player.isDashing)
         //    camfocusx += 100 * Math.signum(player.vx);
         return camfocusx;

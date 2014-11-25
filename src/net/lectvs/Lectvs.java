@@ -56,6 +56,10 @@ public class Lectvs {
 
     // Draws a rectangle
     public static void drawRect(float x, float y, float w, float h) {
+        x = (int)Math.floor(x);
+        y = (int)Math.floor(y);
+        w = (int)Math.floor(w);
+        h = (int)Math.floor(h);
         glBindTexture(GL_TEXTURE_2D, 0);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2d((int)x, (int)y);
@@ -67,6 +71,10 @@ public class Lectvs {
 
     //Draws a hollow rectangle
     public static void drawOutlineRect(float x, float y, float w, float h, int borderWidth) {
+        x = (int)Math.floor(x);
+        y = (int)Math.floor(y);
+        w = (int)Math.floor(w);
+        h = (int)Math.floor(h);
         glBindTexture(GL_TEXTURE_2D, 0);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2d((int) x, (int) y);
