@@ -88,7 +88,7 @@ public class Sprite {
     }
 
     // Renders the sprite and updates animation cycles
-    public void render(int x, int y) {
+    public void render(float x, float y) {
         color.bind();
 
         if (!animations.isEmpty()) {
@@ -108,7 +108,9 @@ public class Sprite {
     }
 
     // Renders the sprite without updating the animation
-    public void renderWithoutAnimation(int x, int y) {
+    public void renderWithoutAnimation(float x, float y) {
+        x = (float)Math.floor(x);
+        y = (float)Math.floor(y);
         try {
             if (frame > currentAnim.frames.length - 1) {
                 frame = currentAnim.frames.length - 1;

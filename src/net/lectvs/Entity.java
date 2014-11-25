@@ -32,7 +32,7 @@ public class Entity {
 
     }
     public void render() {
-        sprite.render((int)x - Game.camx, (int)y - Game.camy);
+        sprite.render(x - Game.camx, y - Game.camy);
     }
 
     public void addForce(float ax, float ay) {

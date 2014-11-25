@@ -53,7 +53,9 @@ public class Tilemap {
         tiles[x][y][1] = ty;
     }
 
-    public void render(int x, int y) {
+    public void render(float x, float y) {
+        x = (float)Math.floor(x);
+        y = (float)Math.floor(y);
         //glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
         //int i = 3;
