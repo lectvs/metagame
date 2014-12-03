@@ -1,9 +1,8 @@
-package platform;
+package net.lectvs;
 
-import platform.enemies.GroundEnemy;
+import net.lectvs.enemies.GroundEnemy;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -112,7 +111,8 @@ public class Game extends Screen{
     // Load the level. This will become a file interpreter once we start using a level editor
     public void loadLevel(String name) {
         try {
-            BufferedReader br = new BufferedReader(new FileReader("src/platform/res/" + name + ".oel"));
+            InputStream in = getClass().getResourceAsStream("/net/lectvs/res/" + name + ".oel");
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String line;
             String[] data;
             int i;

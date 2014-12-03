@@ -1,4 +1,4 @@
-package platform;
+package net.lectvs;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -15,7 +15,7 @@ public class Main {
     // The size of the game window
     public static int gameWidth = 720;
     public static int gameHeight = 405;
-    public static final int GAME_SCALE = 1; //scaling
+    public static final int GAME_SCALE = 2; //scaling
 
     public static int windowWidth = gameWidth * GAME_SCALE;      
     public static int windowHeight = gameHeight * GAME_SCALE; 
