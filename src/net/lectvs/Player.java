@@ -9,6 +9,7 @@ public class Player extends Entity {
 
     public float dashForce, jumpForce;
     public boolean hasDoubleJumped, isDashing, isAttacking;
+    public Wall attackbox;
 
     public Player(int x, int y) {
         super(x, y);
@@ -133,6 +134,11 @@ public class Player extends Entity {
             sprite.playOverride("attack");
         }
 
+        if (isAttacking && sprite.frame == 1)
+            attackbox = new Wall((int)leftBound(), (int)topBound(), (int)w, (int)h);
+        else
+            attackbox = null;
+
         vx += ax;
         vy += ay;
 
@@ -146,6 +152,7 @@ public class Player extends Entity {
         // Draws collision box over player
         GL11.glColor4f(0.2f, 1, 0.2f, 1);
         //Lectvs.drawOutlineRect(leftBound() - Game.camx, topBound() - Game.camy, w, h, 1);
+        if (attackbox != null) attackbox.render();
     }
 
 

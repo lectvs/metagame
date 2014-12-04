@@ -271,8 +271,11 @@ public class Entity {
 
     // Checks collision with another entity
     public boolean collide(Entity e, float x, float y) {
-        return (rightBound() > e.leftBound() && leftBound() < e.rightBound() &&
-                bottomBound() > e.topBound() && topBound() < e.bottomBound());
+        if (e != null) {
+            return (rightBound() > e.leftBound() && leftBound() < e.rightBound() &&
+                    bottomBound() > e.topBound() && topBound() < e.bottomBound());
+        }
+        return false;
     }
 
     // Shorthand for the x and y values of the boundaries of the collision box
