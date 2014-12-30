@@ -1,5 +1,7 @@
 package net.lectvs;
 
+import org.lwjgl.Sys;
+
 /**
  * Created by Hayden on 11/10/2014.
  */
@@ -17,22 +19,25 @@ public class Enemy extends Entity {
     }
 
     public void update() {
-        if (invincibilityTime > 0)
+        if (invincibilityTime > 0) {
             invincibilityTime -= Main.delta;
-
-        if (invincibilityTime <= 0 && collide(Game.player.attackbox, x, y)) {
+        }
+        else if (collide(Game.player.attackbox, x, y)) {
             health -= 1;
             invincibilityTime = 0.5f;
 
-            addForce(Math.signum(x + w / 2 - Game.player.x) * 10, -10);
-            y -= vy;
+            addForce(Game.player.direction() * 10, -4);
         }
         if (health <= 0) {
-            Game.removeObjects.add(this);
+            die();
         }
     }
 
     public void render() {
 
+    }
+
+    public void die() {
+        Game.removeObjects.add(this);
     }
 }

@@ -3,6 +3,7 @@ package net.lectvs.enemies;
 import net.lectvs.Enemy;
 import net.lectvs.Game;
 import net.lectvs.Lectvs;
+import org.lwjgl.Sys;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -21,15 +22,31 @@ public class GroundEnemy extends Enemy {
         vx = 1;
 
         maxSpeed = Math.abs(velocity);
-        //inertia = 1;
+        acceleration = 0.4f;
+        friction = 0.4f;
     }
 
     public void update() {
-        velocity = vx;
+        if (velocity < 0) {
+            if (vx >= -maxSpeed) {
+                vx -= Math.min(acceleration, maxSpeed + vx);
+            } else {
+                vx += friction;
+            }
+        }
+        else {
+            if (vx <= maxSpeed) {
+                vx += Math.min(acceleration, maxSpeed - vx);
+            } else {
+                vx -= friction;
+            }
+        }
+
         vy += 0.3f;
+
         move(true);
 
-        if (vx == 0) {
+        if (collidingHoriz) {
             velocity = -velocity;
             vx = velocity;
         }

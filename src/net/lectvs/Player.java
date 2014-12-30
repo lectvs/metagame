@@ -54,7 +54,7 @@ public class Player extends Entity {
             }
 
             if (Stats.canDash && Main.keyDashDown && !Main.keyDashLast) {
-                addForce(-dashForce, 0);
+                addForce(-dashForce, -vy);
                 isDashing = true;
                 isAttacking = false;
                 sprite.play("dash");
@@ -76,7 +76,7 @@ public class Player extends Entity {
             }
 
             if (Stats.canDash && Main.keyDashDown && !Main.keyDashLast) {
-                addForce(dashForce, 0);
+                addForce(dashForce, -vy);
                 isDashing = true;
                 isAttacking = false;
                 sprite.play("dash");
@@ -113,7 +113,7 @@ public class Player extends Entity {
                 isDashing = false;
             }
             onGround = false;
-            vy = 0;
+            //vy = 0;
             ay = 0;
         }
 
@@ -135,7 +135,7 @@ public class Player extends Entity {
         }
 
         if (isAttacking && sprite.frame == 1)
-            attackbox = new Wall((int)leftBound(), (int)topBound(), (int)w, (int)h);
+            attackbox = new Wall((int)leftBound() - 10, (int)topBound(), (int)w + 20, (int)h);
         else
             attackbox = null;
 
@@ -151,9 +151,11 @@ public class Player extends Entity {
 
         // Draws collision box over player
         GL11.glColor4f(0.2f, 1, 0.2f, 1);
-        //Lectvs.drawOutlineRect(leftBound() - Game.camx, topBound() - Game.camy, w, h, 1);
+        Lectvs.drawOutlineRect(leftBound() - Game.camx, topBound() - Game.camy, w, h, 1);
         if (attackbox != null) attackbox.render();
     }
 
-
+    public int direction() {
+        return (int)Math.signum(sprite.sx);
+    }
 }

@@ -15,14 +15,13 @@ public class AttackBox extends Entity {
         tx = x;
         ty = y;
         this.parent = parent;
-        this.damage = damage;
-        this.knockback = knockback;
 
-        setBounds(0, 0, w, h);
+        //setBounds(0, 0, w, h);
 
         active = true;
     }
     public void update() {
         x = parent.x + tx;
+        y = parent.y + ty;
     }
 }

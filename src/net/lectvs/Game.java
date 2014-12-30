@@ -95,10 +95,10 @@ public class Game extends Screen{
         }
         player.render();
 
-        glColor4f(0, 0, 0, 1);
+        glColor4f(1, 0, 0, 1);
         glBindTexture(GL_TEXTURE_2D, 0);
         for (Wall w : walls) {
-            w.render();
+            //w.render();
         }
 
         glColor4f(1, 1, 1, 1);
@@ -152,7 +152,7 @@ public class Game extends Screen{
                 for (int j = 0; j < data.length; j++) {
                     foreground.setTile(j, i, Integer.parseInt(data[j]) % (foreground.textureWidth / foreground.tileWidth), (int)Math.floor(Integer.parseInt(data[j]) / (double)(foreground.textureWidth / foreground.tileWidth)));
                     if (j < data.length - 1) {
-                        //add slope data to slope tiles
+                        // Add slope data to slope tiles
                         if ((data[j].equals("24") && data[j + 1].equals("25")) || (data[j].equals("28") && data[j + 1].equals("29"))) {
                             walls.add(new Slope(32 * j, 32 * i, 64, 32, 1));
                         } else if ((data[j].equals("26") && data[j + 1].equals("27")) || (data[j].equals("30") && data[j + 1].equals("31"))) {

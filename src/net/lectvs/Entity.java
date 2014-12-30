@@ -42,17 +42,30 @@ public class Entity {
 
     // Moves the entity
     public void move(boolean collideWithWalls) {
-        x += vx;
-        if (collideWithWalls) {
-            collideWithWallsX();
+        collidingHoriz = false;
+        int n = (int)Math.ceil(Math.abs(vx) / 64f);
+        for (int i = 0; i < n; i++){
+            x += vx / n;
+            if (collideWithWalls) {
+                collideWithWallsX();
+            }
         }
+        if (collidingHoriz)
+            vx = 0;
 
-        y += vy;
-        if (onGround)
-            y += Math.abs(vx);     // Moves the player down extra pixels to ensure it "sticks" to slopes when walking down them
-        if (collideWithWalls) {
-            collideWithWallsY();
+        collidingVert = false;
+        if (onGround && vy >= 0)
+            vy += Math.abs(vx);     // Moves the player down extra pixels to ensure it "sticks" to slopes when walking down them
+
+        n = (int)Math.ceil(Math.abs(vy) / 64f);
+        for (int i = 0; i < n; i++) {
+            y += vy / n;
+            if (collideWithWalls) {
+                collideWithWallsY();
+            }
         }
+        if (collidingVert)
+            vy = 0;
     }
 
     public void collideWithWallsX() {
@@ -69,10 +82,10 @@ public class Entity {
             if (slope.dir == 2 || slope.dir == 3) {
                 if (vx > 0 && leftBound() < slope.leftBound()) {
                     x = slope.x + ox - w - bx;
-                    vx = 0;
-                //} else if (!onGround && ((slope.dir == 2 && bottomBound() > slope.bottomBound()) || (slope.dir == 3 && topBound() < slope.topBound()))) {
-                //    x = slope.x + slope.w + ox - bx;
-                //    vx = 0;
+                    collidingHoriz = true;
+                    //} else if (!onGround && ((slope.dir == 2 && bottomBound() > slope.bottomBound()) || (slope.dir == 3 && topBound() < slope.topBound()))) {
+                    //    x = slope.x + slope.w + ox - bx;
+                    //    collidingHoriz = true;
                 } else if (slope.dir == 2) {
                     if (leftBound() > slope.leftBound()) {
                         y = (slope.h / slope.w) * (leftBound() - slope.leftBound()) + slope.topBound() - h + oy - by;
@@ -90,10 +103,10 @@ public class Entity {
             if (slope.dir == 1 || slope.dir == 4) {
                 if (vx < 0 && rightBound() > slope.rightBound()){
                     x = slope.x + slope.w + ox - bx;
-                    vx = 0;
-                //} else if (!onGround && ((slope.dir == 1 && bottomBound() > slope.bottomBound()) || (slope.dir == 4 && topBound() < slope.topBound()))) {
-                //    x = slope.x + ox - w - bx;
-                //    vx = 0;
+                    collidingHoriz = true;
+                    //} else if (!onGround && ((slope.dir == 1 && bottomBound() > slope.bottomBound()) || (slope.dir == 4 && topBound() < slope.topBound()))) {
+                    //    x = slope.x + ox - w - bx;
+                    //    collidingHoriz = true;
                 } else if (slope.dir == 1) {
                     if (rightBound() < slope.rightBound()) {
                         y = -(slope.h / slope.w) * (rightBound() - slope.leftBound()) + slope.bottomBound() - h + oy - by;
@@ -115,10 +128,10 @@ public class Entity {
         if (wall != null) {
             if (vx > 0) {
                 x = wall.x + ox - w - bx;
-                vx = 0;
+                collidingHoriz = true;
             } else {
                 x = wall.x + wall.w + ox - bx;
-                vx = 0;
+                collidingHoriz = true;
             }
         }
     }
@@ -131,11 +144,11 @@ public class Entity {
         if (wall != null) {
             if (vy > 0) {
                 y = wall.y + oy - h - by;
-                vy = 0;
+                collidingVert = true;
                 onGround = true;
             } else {
                 y = wall.y + wall.h + oy - by;
-                vy = 0;
+                collidingVert = true;
             }
         }
 
@@ -145,48 +158,48 @@ public class Entity {
             if (slope.dir == 3 || slope.dir == 4) {
                 if (vy > 0 && topBound() < slope.topBound()) {
                     y = slope.y + oy - h - by;
-                    vy = 0;
+                    collidingVert = true;
                     onGround = true;
                 } else if (slope.dir == 3) {
                     if (leftBound() > slope.leftBound()) {
                         y = -(slope.h / slope.w) * (leftBound() - slope.leftBound()) + slope.bottomBound() + oy - by;
-                        vy = 0;
+                        collidingVert = true;
                     } else {
                         y = slope.bottomBound() + oy - by;
-                        vy = 0;
+                        collidingVert = true;
                     }
                 } else if (slope.dir == 4) {
                     if (rightBound() < slope.rightBound()) {
                         y = (slope.h / slope.w) * (rightBound() - slope.leftBound()) + slope.topBound() + oy - by;
-                        vy = 0;
+                        collidingVert = true;
                     } else {
                         y = slope.bottomBound() + oy - by;
-                        vy = 0;
+                        collidingVert = true;
                     }
                 }
             }
             if (slope.dir == 1 || slope.dir == 2) {
                 if (vy < 0 && bottomBound() > slope.bottomBound()) {
                     y = slope.y + slope.h + oy - by;
-                    vy = 0;
+                    collidingVert = true;
                 } else if (slope.dir == 1) {
                     if (rightBound() < slope.rightBound()) {
                         y = -(slope.h / slope.w) * (rightBound() - slope.leftBound()) + slope.bottomBound() - h + oy - by;
-                        vy = 0;
+                        collidingVert = true;
                         onGround = true;
                     } else {
                         y = slope.topBound() - h + oy - by;
-                        vy = 0;
+                        collidingVert = true;
                         onGround = true;
                     }
                 } else if (slope.dir == 2) {
                     if (leftBound() > slope.leftBound()) {
                         y = (slope.h / slope.w) * (leftBound() - slope.leftBound()) + slope.topBound() - h + oy - by;
-                        vy = 0;
+                        collidingVert = true;
                         onGround = true;
                     } else {
                         y = slope.topBound() - h + oy - by;
-                        vy = 0;
+                        collidingVert = true;
                         onGround = true;
                     }
                 }
@@ -245,9 +258,9 @@ public class Entity {
             if (wall instanceof Slope && collide(wall, x, y)) {
                 sl = (Slope) wall;
                 if ((sl.dir == 1 && bottomBound() - sl.bottomBound() > -(sl.h / sl.w) * (rightBound() - sl.leftBound())) ||
-                    (sl.dir == 2 && bottomBound() - sl.topBound() > (sl.h / sl.w) * (leftBound() - sl.leftBound())) ||
-                    (sl.dir == 3 && topBound() - sl.bottomBound() < -(sl.h / sl.w) * (leftBound() - sl.leftBound())) ||
-                    (sl.dir == 4 && topBound() - sl.topBound() < (sl.h / sl.w) * (rightBound() - sl.leftBound()))) {
+                        (sl.dir == 2 && bottomBound() - sl.topBound() > (sl.h / sl.w) * (leftBound() - sl.leftBound())) ||
+                        (sl.dir == 3 && topBound() - sl.bottomBound() < -(sl.h / sl.w) * (leftBound() - sl.leftBound())) ||
+                        (sl.dir == 4 && topBound() - sl.topBound() < (sl.h / sl.w) * (rightBound() - sl.leftBound()))) {
 
                     return sl;
                 }
@@ -270,10 +283,17 @@ public class Entity {
     }
 
     // Checks collision with another entity
-    public boolean collide(Entity e, float x, float y) {
+    public boolean collide(Entity e) {
         if (e != null) {
             return (rightBound() > e.leftBound() && leftBound() < e.rightBound() &&
                     bottomBound() > e.topBound() && topBound() < e.bottomBound());
+        }
+        return false;
+    }
+    public boolean collide(Entity e, float xx, float yy) {
+        if (e != null) {
+            return (rightBound() - x + xx > e.leftBound() && leftBound() - x + xx < e.rightBound() &&
+                    bottomBound() - y + yy > e.topBound() && topBound() - y + yy < e.bottomBound());
         }
         return false;
     }
@@ -290,5 +310,11 @@ public class Entity {
     }
     public float bottomBound() {
         return y - oy + by + h;
+    }
+    public float centerX() {
+        return x - ox + bx + w / 2f;
+    }
+    public float centerY() {
+        return y - oy + by + h / 2f;
     }
 }
