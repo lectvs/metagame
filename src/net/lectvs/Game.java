@@ -1,7 +1,11 @@
 package net.lectvs;
 
 import net.lectvs.enemies.GroundEnemy;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
 
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -95,7 +99,7 @@ public class Game extends Screen{
         }
         player.render();
 
-        glColor4f(1, 0, 0, 1);
+        glColor4f(1, 1, 0, 1);
         glBindTexture(GL_TEXTURE_2D, 0);
         for (Wall w : walls) {
             //w.render();
@@ -111,59 +115,77 @@ public class Game extends Screen{
     // Load the level. This will become a file interpreter once we start using a level editor
     public void loadLevel(String name) {
         try {
-            InputStream in = getClass().getResourceAsStream("/net/lectvs/res/" + name + ".oel");
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String line;
-            String[] data;
-            int i;
+            InputStream in = getClass().getResourceAsStream("/net/lectvs/res/" + name + ".dam");
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
 
-            line = br.readLine(); // Level w/h data
-            data = line.split("\"");
-            levelWidth = Integer.parseInt(data[1]);
-            levelHeight = Integer.parseInt(data[3]);
+            doc.getDocumentElement().normalize();
 
-            line = br.readLine(); // BG tileset + First line
-            data = line.split(">");
-            background = new Tilemap(data[0].split("\"")[1] + ".png", levelWidth, levelHeight, 32, 32);
-            backgroundPanel = new Sprite("forest_backgroundpanel.png");
-            data = line.split(">")[1].split(",");
-            i = 0;
-            do { // BG tile data
-                for (int j = 0; j < data.length; j++) {
-                    background.setTile(j, i, Integer.parseInt(data[j]) % (background.textureWidth / background.tileWidth), (int)Math.floor(Integer.parseInt(data[j]) / (double)(background.textureWidth / background.tileWidth)));
-                }
-                i++;
-                line = br.readLine();
-                data = line.split("<")[0].split(",");
-            } while (!line.startsWith("  <"));
+            background = null;
+            backgroundPanel = null;
+            foreground = null;
+            foregroundPanel = null;
 
-            while (!(line = br.readLine()).startsWith("  <")) { // Wall data
-                data = line.split("\"");
-                walls.add(new Wall(Integer.parseInt(data[1]), Integer.parseInt(data[3]), Integer.parseInt(data[5]), Integer.parseInt(data[7])));
-            }
+            NodeList nodes = doc.getElementsByTagName("maplayer");
+            levelWidth  = Integer.parseInt( ((Element)nodes.item(0)).getAttribute("width") ) * 32;
+            levelHeight = Integer.parseInt( ((Element)nodes.item(0)).getAttribute("height") ) * 32;
 
-            line = br.readLine(); // FG tileset + First line
-            data = line.split(">");
-            foreground = new Tilemap(data[0].split("\"")[1] + ".png", levelWidth, levelHeight, 32, 32);
-            foregroundPanel = new Sprite("forest_foregroundpanel.png");
-            data = data[1].split(",");
-            i = 0;
-            do { // FG tile data
-                for (int j = 0; j < data.length; j++) {
-                    foreground.setTile(j, i, Integer.parseInt(data[j]) % (foreground.textureWidth / foreground.tileWidth), (int)Math.floor(Integer.parseInt(data[j]) / (double)(foreground.textureWidth / foreground.tileWidth)));
-                    if (j < data.length - 1) {
-                        // Add slope data to slope tiles
-                        if ((data[j].equals("24") && data[j + 1].equals("25")) || (data[j].equals("28") && data[j + 1].equals("29"))) {
-                            walls.add(new Slope(32 * j, 32 * i, 64, 32, 1));
-                        } else if ((data[j].equals("26") && data[j + 1].equals("27")) || (data[j].equals("30") && data[j + 1].equals("31"))) {
-                            walls.add(new Slope(32 * j, 32 * i, 64, 32, 2));
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Element node = (Element) nodes.item(i);
+                if (node.getAttribute("name").startsWith("collision")) {
+                    NodeList rows = node.getElementsByTagName("row");
+                    for (int j = 0; j < rows.getLength(); j++) {
+                        String[] data = rows.item(j).getTextContent().split(",");
+                        int wallStart = -1;
+                        for (int k = 0; k < data.length; k++) {
+                            int d  = Integer.parseInt(data[k]);
+                            int d2 = -1;
+                            if (k < data.length - 1)
+                                d2 = Integer.parseInt(data[k + 1]);
+
+                            if (wallStart <= -1 && (d == 1 || d == 9)) {
+                                wallStart = k;
+                            }
+                            if (wallStart > -1 && !(d == 1 || d == 9)) {
+                                walls.add(new Wall(wallStart * 32, j * 32, (k - wallStart) * 32, 32));
+                                wallStart = -1;
+                            }
+                            if (wallStart > -1 && k == data.length - 1) {
+                                walls.add(new Wall(wallStart * 32, j * 32, (k - wallStart + 1) * 32, 32));
+                                wallStart = -1;
+                            }
+
+                            if ((d == 2 && d2 == 3) || (d == 10 && d2 == 11)) {
+                                walls.add(new Slope(k * 32, j * 32, 64, 32, 1));
+                            }
+                            if ((d == 4 && d2 == 5) || (d == 12 && d2 == 13)) {
+                                walls.add(new Slope(k * 32, j * 32, 64, 32, 2));
+                            }
                         }
                     }
                 }
-                i++;
-                line = br.readLine();
-                data = line.split("<")[0].split(",");
-            } while (!line.startsWith("</level>"));
+                if (node.getAttribute("name").startsWith("background")) {
+                    background = new Tilemap(node.getAttribute("tileset"), levelWidth, levelHeight, 32, 32);
+
+                    NodeList rows = node.getElementsByTagName("row");
+                    for (int j = 0; j < rows.getLength(); j++) {
+                        String[] data = rows.item(j).getTextContent().split(",");
+                        for (int k = 0; k < data.length; k++) {
+                            background.setTile(k, j, Integer.parseInt(data[k]) % (background.textureWidth / background.tileWidth), (int)Math.floor(Integer.parseInt(data[k]) / (double)(background.textureWidth / background.tileWidth)));
+                        }
+                    }
+                }
+                if (node.getAttribute("name").startsWith("foreground")) {
+                    foreground = new Tilemap(node.getAttribute("tileset"), levelWidth, levelHeight, 32, 32);
+
+                    NodeList rows = node.getElementsByTagName("row");
+                    for (int j = 0; j < rows.getLength(); j++) {
+                        String[] data = rows.item(j).getTextContent().split(",");
+                        for (int k = 0; k < data.length; k++) {
+                            foreground.setTile(k, j, Integer.parseInt(data[k]) % (foreground.textureWidth / foreground.tileWidth), (int)Math.floor(Integer.parseInt(data[k]) / (double)(foreground.textureWidth / foreground.tileWidth)));
+                        }
+                    }
+                }
+            }
 
         } catch (Exception e) {
             // Failed to load level
