@@ -48,8 +48,8 @@ public class Sprite {
         frame = 0;
         timer = 0;
         currentAnim = new Animation(true, 0, new int[]{0});
-        width = texture.getTextureWidth();
-        height = texture.getTextureHeight();
+        width = texture.getImageWidth();
+        height = texture.getImageHeight();
         animName = "";
     }
 
@@ -136,5 +136,39 @@ public class Sprite {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void renderWholeImage(float x, float y) {
+        x = (float)Math.floor(x);
+        y = (float)Math.floor(y);
+        try {
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureID());
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+
+            GL11.glPushMatrix();
+            GL11.glTranslatef(x, y, 0.0f);
+            GL11.glRotated(angle, 0, 0, 1.0f);
+            GL11.glBegin(GL11.GL_QUADS);
+            GL11.glTexCoord2f(0, 0);
+            GL11.glVertex2f(-ox * sx, -oy * sy);
+            GL11.glTexCoord2f(1, 0);
+            GL11.glVertex2f((width - ox) * sx, -oy * sy);
+            GL11.glTexCoord2f(1, 1);
+            GL11.glVertex2f((width - ox) * sx, (height - oy) * sy);
+            GL11.glTexCoord2f(0, 1);
+            GL11.glVertex2f(-ox * sx, (height - oy) * sy);
+            GL11.glEnd();
+            GL11.glPopMatrix();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int imageWidth() {
+        return texture.getTextureWidth();
+    }
+    public int imageHeight() {
+        return texture.getTextureHeight();
     }
 }

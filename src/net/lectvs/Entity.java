@@ -43,7 +43,7 @@ public class Entity {
     // Moves the entity
     public void move(boolean collideWithWalls) {
         collidingHoriz = false;
-        int n = (int)Math.ceil(Math.abs(vx) / 64f);
+        int n = (int)Math.ceil(Math.abs(vx) / 32f);
         for (int i = 0; i < n; i++) {
             x += vx / n;
             if (collideWithWalls) {
@@ -57,7 +57,7 @@ public class Entity {
         if (onGround && vy >= 0)
             vy += Math.abs(vx);     // Moves the entity down extra pixels to ensure it "sticks" to slopes when walking down them
 
-        n = (int)Math.ceil(Math.abs(vy) / 64f);
+        n = (int)Math.ceil(Math.abs(vy) / 32f);
         for (int i = 0; i < n; i++) {
             y += vy / n;
             if (collideWithWalls) {

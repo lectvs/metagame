@@ -61,8 +61,8 @@ public class Game extends Screen{
             truecamy = camFocusY();
         }
 
-        truecamx = Math.max(Main.gameWidth / 2, Math.min(levelWidth - Main.gameWidth / 2, truecamx));
-        truecamy = Math.max(Main.gameHeight / 2, Math.min(levelHeight - Main.gameHeight / 2, truecamy));
+        truecamx = Math.max(Main.gameWidth / 2, Math.min(levelWidth - Main.gameWidth / 2 - 1, truecamx));
+        truecamy = Math.max(Main.gameHeight / 2, Math.min(levelHeight - Main.gameHeight / 2 - 1, truecamy));
 
         camx = truecamx - Main.gameWidth / 2;
         camy = truecamy - Main.gameHeight / 2;
@@ -89,10 +89,13 @@ public class Game extends Screen{
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glColor4f(1, 1, 1, 1);
-        if (backgroundPanel != null)
-            backgroundPanel.render(-camx, -camy);
+        if (backgroundPanel != null) {
+            for (int i = 0; i < levelWidth; i += 1280) {
+                backgroundPanel.renderWholeImage(i - camx, -camy);
+            }
+        }
         if (background != null)
-            background.render(-camx, -camy);
+            //background.render(-camx, -camy);
 
         for (Entity e : gameObjects) {
             e.render();
@@ -102,17 +105,20 @@ public class Game extends Screen{
         glColor4f(1, 1, 0, 1);
         glBindTexture(GL_TEXTURE_2D, 0);
         for (Wall w : walls) {
-            //w.render();
+           // w.render();
         }
 
         glColor4f(1, 1, 1, 1);
         if (foreground != null)
             foreground.render(-camx, -camy);
-        if (foregroundPanel != null)
-            foregroundPanel.render(-camx, -camy);
+        if (foregroundPanel != null) {
+            for (int i = 0; i < levelWidth; i += 1280) {
+                foregroundPanel.renderWholeImage(i - camx, -camy);
+            }
+        }
     }
 
-    // Load the level. This will become a file interpreter once we start using a level editor
+    // Load the level
     public void loadLevel(String name) {
         try {
             InputStream in = getClass().getResourceAsStream("/net/lectvs/res/" + name + ".dam");
@@ -125,9 +131,28 @@ public class Game extends Screen{
             foreground = null;
             foregroundPanel = null;
 
-            NodeList nodes = doc.getElementsByTagName("maplayer");
-            levelWidth  = Integer.parseInt( ((Element)nodes.item(0)).getAttribute("width") ) * 32;
-            levelHeight = Integer.parseInt( ((Element)nodes.item(0)).getAttribute("height") ) * 32;
+            NodeList nodes = doc.getElementsByTagName("imagelayer");
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Element node = (Element) nodes.item(i);
+                if (node.getAttribute("name").startsWith("background")) {
+                    backgroundPanel = new Sprite(node.getAttribute("file"));
+                }
+                if (node.getAttribute("name").startsWith("foreground")) {
+                    foregroundPanel = new Sprite(node.getAttribute("file"));
+                }
+            }
+
+            nodes = doc.getElementsByTagName("maplayer");
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Element node = (Element) nodes.item(i);
+                int width = Integer.parseInt(node.getAttribute("width")) * 32;
+                int height = Integer.parseInt(node.getAttribute("height")) * 32;
+
+                if (width > levelWidth)
+                    levelWidth = width;
+                if (height > levelHeight)
+                    levelHeight = height;
+            }
 
             for (int i = 0; i < nodes.getLength(); i++) {
                 Element node = (Element) nodes.item(i);

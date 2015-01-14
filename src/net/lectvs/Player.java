@@ -151,8 +151,8 @@ public class Player extends Entity {
 
         // Draws collision box over player
         GL11.glColor4f(0.2f, 1, 0.2f, 1);
-        Lectvs.drawOutlineRect(leftBound() - Game.camx, topBound() - Game.camy, w, h, 1);
-        if (attackbox != null) attackbox.render();
+        //Lectvs.drawOutlineRect(leftBound() - Game.camx, topBound() - Game.camy, w, h, 1);
+        //if (attackbox != null) attackbox.render();
     }
 
     public int direction() {
