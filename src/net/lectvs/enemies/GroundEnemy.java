@@ -56,7 +56,8 @@ public class GroundEnemy extends Enemy {
 
     public void render() {
         GL11.glColor4f(1, 0, 0, 1);
-        Lectvs.drawRect(leftBound() - Game.camx, topBound() - Game.camy, w, h);
+        if (!flashing)
+            Lectvs.drawRect(leftBound() - Game.camx, topBound() - Game.camy, w, h);
         super.render();
     }
 }
