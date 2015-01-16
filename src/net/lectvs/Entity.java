@@ -66,6 +66,7 @@ public class Entity {
         }
         if (collidingVert)
             vy = 0;
+
     }
 
     public void collideWithWallsX() {

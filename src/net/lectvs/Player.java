@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class Player extends Entity {
 
-    public float dashForce, jumpForce;
+    public float dashForce, jumpForce, attackForce;
     public boolean hasDoubleJumped, isDashing, isAttacking;
     public Wall attackbox;
 
@@ -30,6 +30,7 @@ public class Player extends Entity {
         deceleration = 1.6f;
 
         dashForce = 20;
+        attackForce = 4;
         jumpForce = 10;
 
         hasDoubleJumped = false;
@@ -131,11 +132,12 @@ public class Player extends Entity {
 
         if (Main.keyAttackDown && !Main.keyAttackLast) {
             isAttacking = true;
+            vx = 0;
             sprite.playOverride("attack");
         }
 
         if (isAttacking && sprite.frame == 1)
-            attackbox = new Wall((int)leftBound() - 10, (int)topBound(), (int)w + 20, (int)h);
+            attackbox = new Wall((int)centerX() - 20 + 10 * direction(), (int)topBound(), 40, (int)h);
         else
             attackbox = null;
 

@@ -8,6 +8,8 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -22,8 +24,8 @@ public class Game extends Screen{
 
     public static ArrayList<Wall> walls = new ArrayList<Wall>();
     public static ArrayList<Entity> gameObjects = new ArrayList<Entity>();
-    public static ArrayList<Entity> removeObjects = new ArrayList<Entity>();
-    public static ArrayList<Entity> addObjects = new ArrayList<Entity>();
+    public static Queue<Entity> removeObjects = new LinkedList<Entity>();
+    public static Queue<Entity> addObjects = new LinkedList<Entity>();
 
     public Sprite foregroundPanel, backgroundPanel;
     public Tilemap foreground, background;
@@ -31,6 +33,7 @@ public class Game extends Screen{
 
     public static float camx, camy;
     public static float truecamx, truecamy;
+    public static float bgParallaxFactor, fgParallaxFactor;
 
     public static Player player;
 
@@ -43,7 +46,8 @@ public class Game extends Screen{
         player = new Player(100, 200);
         camx = camy = 0;
         truecamx = truecamy = 0;
-
+        bgParallaxFactor = 0.5f;
+        fgParallaxFactor = 1;
         loadLevel("level1");
     }
 
@@ -53,13 +57,6 @@ public class Game extends Screen{
         // Set camera to place the player in the center of the screen
         truecamx += (camFocusX() - truecamx) / 4f;
         truecamy += (camFocusY() - truecamy) / 4f;
-
-        if (Math.abs(camFocusX() - truecamx) < 5) {
-            truecamx = camFocusX();
-        }
-        if (Math.abs(camFocusY() - truecamy) < 5) {
-            truecamy = camFocusY();
-        }
 
         truecamx = Math.max(Main.gameWidth / 2, Math.min(levelWidth - Main.gameWidth / 2 - 1, truecamx));
         truecamy = Math.max(Main.gameHeight / 2, Math.min(levelHeight - Main.gameHeight / 2 - 1, truecamy));
@@ -74,12 +71,12 @@ public class Game extends Screen{
         }
 
         // Add and remove all queued entities
-        for (Entity e : removeObjects) gameObjects.remove(e);
-        for (Entity e : addObjects) gameObjects.add(e);
-
-        // Clear the queue after objects have been added
-        removeObjects.clear();
-        addObjects.clear();
+        while (!removeObjects.isEmpty()) {
+            gameObjects.remove(removeObjects.remove());
+        }
+        while (!addObjects.isEmpty()) {
+            gameObjects.add(addObjects.remove());
+        }
     }
 
     public void render() {
@@ -90,8 +87,12 @@ public class Game extends Screen{
 
         glColor4f(1, 1, 1, 1);
         if (backgroundPanel != null) {
-            for (int i = 0; i < levelWidth; i += 1280) {
-                backgroundPanel.renderWholeImage(i - camx, -camy);
+            int n = (int)Math.ceil((camx * (bgParallaxFactor + 1) + Main.gameWidth) / 1280f);
+            int m = (int)Math.ceil((camy * (bgParallaxFactor + 1) + Main.gameHeight) / 768f);
+            for (int i = 0; i < n; i += 1) {
+                for (int j = 0; j < m; j += 1) {
+                    backgroundPanel.renderWholeImage(1280 * i - camx * bgParallaxFactor, 768 * j - camy * bgParallaxFactor);
+                }
             }
         }
         if (background != null)
@@ -112,8 +113,12 @@ public class Game extends Screen{
         if (foreground != null)
             foreground.render(-camx, -camy);
         if (foregroundPanel != null) {
-            for (int i = 0; i < levelWidth; i += 1280) {
-                foregroundPanel.renderWholeImage(i - camx, -camy);
+            int n = (int)Math.ceil((camx * (fgParallaxFactor + 1) + Main.gameWidth) / 1280f);
+            int m = (int)Math.ceil((camy * (fgParallaxFactor + 1) + Main.gameHeight) / 768f);
+            for (int i = 0; i < n; i += 1) {
+                for (int j = 0; j < m; j += 1) {
+                    foregroundPanel.renderWholeImage(1280 * i - camx * fgParallaxFactor, 768 * j - camy * fgParallaxFactor);
+                }
             }
         }
     }
